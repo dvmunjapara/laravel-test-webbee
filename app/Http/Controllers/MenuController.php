@@ -101,12 +101,11 @@ class MenuController extends BaseController
         $menu_items = $menu_items->sortByDesc('parent_id');
         $parent_menu = $menu_items->whereNull('parent_id')->keyBy('id');
         $menu_items_with_children = $menu_items->whereNotNull('parent_id')->keyBy('id');
-        $items = [];
 
         foreach ($menu_items_with_children as $key => $menu_items_with_child) {
 
             $children = collect($menu_items_with_children)->where('parent_id',$key);
-            $menu_items_with_children[$key]['children'] = $children->values()->toArray();
+            $menu_items_with_children[$key]['children'] = $children->sortBy('id')->values();
 
             $menu_items_with_children = $menu_items_with_children->whereNotIn('id',$children->pluck('id'));
         }
@@ -115,7 +114,7 @@ class MenuController extends BaseController
 
         foreach ($menu_items_with_children as $key => $menu_items_with_child) {
 
-            $parent_menu[$key]['children'] = $menu_items_with_children->values()->toArray();
+            $parent_menu[$key]['children'] = $menu_items_with_child->sortBy('id')->values();
         }
 
         return response()->json($parent_menu->values());
