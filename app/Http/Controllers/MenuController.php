@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MenuItem;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\DB;
 
 class MenuController extends BaseController
 {
@@ -95,6 +96,28 @@ class MenuController extends BaseController
      */
 
     public function getMenuItems() {
-        throw new \Exception('implement in coding task 3');
+
+        $menu_items = MenuItem::all();
+        $menu_items = $menu_items->sortByDesc('parent_id');
+        $parent_menu = $menu_items->whereNull('parent_id')->keyBy('id');
+        $menu_items_with_children = $menu_items->whereNotNull('parent_id')->keyBy('id');
+        $items = [];
+
+        foreach ($menu_items_with_children as $key => $menu_items_with_child) {
+
+            $children = collect($menu_items_with_children)->where('parent_id',$key);
+            $menu_items_with_children[$key]['children'] = $children->values()->toArray();
+
+            $menu_items_with_children = $menu_items_with_children->whereNotIn('id',$children->pluck('id'));
+        }
+
+        $menu_items_with_children = collect($menu_items_with_children)->groupBy('parent_id');
+
+        foreach ($menu_items_with_children as $key => $menu_items_with_child) {
+
+            $parent_menu[$key]['children'] = $menu_items_with_children->values()->toArray();
+        }
+
+        return response()->json($parent_menu->values());
     }
 }
