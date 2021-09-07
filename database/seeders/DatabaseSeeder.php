@@ -52,8 +52,8 @@ class DatabaseSeeder extends Seeder
             ]);
 
             Workshop::create([
-                'start' => '2021/08/21 10:00',
-                'end' => '2021/08/21 18:00',
+                'start' => '2021/09/21 10:00',
+                'end' => '2021/09/21 18:00',
                 'name' => '#NoClass pure functional programming',
                 'event_id' => $rcon->id
             ]);
