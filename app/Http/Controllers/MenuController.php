@@ -95,6 +95,29 @@ class MenuController extends BaseController
      */
 
     public function getMenuItems() {
-        throw new \Exception('implement in coding task 3');
+
+        $menu_items = MenuItem::all();
+        $menu_items = $menu_items->keyBy('id');
+
+        $items = [];
+
+        $menu_with_child = collect($menu_items)->whereNotNull('parent_id')->groupBy('parent_id');
+
+        foreach ($menu_with_child as $key => $menu_item) {
+
+
+            if (isset($menu_items[$key])) {
+                $children = collect($menu_item);
+                $menu_items[$key]['children'] = $children->toArray();
+            }
+        }
+
+        return response()->json($menu_items);
     }
+
+    private function assignChild() {
+
+
+    }
+
 }
