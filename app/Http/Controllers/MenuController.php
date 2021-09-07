@@ -115,7 +115,7 @@ class MenuController extends BaseController
 
         foreach ($menu_items_with_children as $key => $menu_items_with_child) {
 
-            $parent_menu[$key]['children'] = $menu_items_with_children->values()->toArray();
+            $parent_menu[$key]['children'] = $menu_items_with_child->values()->toArray();
         }
 
         return response()->json($parent_menu->values());
